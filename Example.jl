@@ -7,17 +7,19 @@ Ly = 4.0
 Lz = 3.0
 
 # Here we define the step of the grid over which we want to calculate the mode
-# shape
+# shape. It will be one point every rx, ry, rz meters along x, y, and z
+# respectively.
 rx = 0.1
 ry = 0.1
 rz = 0.1
 
-# We identify the mode we want to calculate with these three indices
+# We identify the mode we want to calculate with these three indices, the mode
+# numbers.
 nx = 1
 ny = 0
 nz = 0
 
-# Here we assign an amplitude to the mode, as we were plotting the pressure
+# Here we assign an amplitude to the mode, as if we were plotting the pressure
 # field in the room as driven by a sine wave source of appropriate power to 
 # sustain the target SPL, at steady state regime. dB re 20uPa
 SPL = 80.0
@@ -25,10 +27,10 @@ SPL = 80.0
 # Finally, we set the height in the room at which we want to plot the result.
 lh = 1.80
 
-X, Y, Z = roomGrid(rx, ry, rz, Lx, Ly, Lz)
-x       = X[1, :, 1]
-y       = Y[:, 1, 1]
-z       = Z[1, 1, :]
+# Computations below.
+
+x, y, z = roomAxes(rx, ry, rz, Lx, Ly, Lz)
+X, Y, Z = meshGrid(x, y, z)
 li      = argmin(abs.(z .- lh))
 
 P       = 20e-6 * exp10(SPL / 20.0)
@@ -49,7 +51,7 @@ modePlot = contourf(x, y, eigenV[:, :, li],
         title = "Resonance mode at $eigenF Hz, z = $(z[li]) m"
         )
         
-# Can make a little animation too
+### Can make a little animation too - Comment this section in case of troubles
 eigenT  = 1.0 / eigenF
 
 Tsteps  = 64
@@ -75,6 +77,8 @@ end
 fps     = 12
 
 gif(anim, "/tmp/rmode.gif", fps = fps)
+
+###
 
 # Let's show the first plot:
 display(modePlot)

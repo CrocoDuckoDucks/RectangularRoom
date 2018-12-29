@@ -158,7 +158,7 @@ end
 """
     indexGrid(Nx, Ny, Nz)
     
-Returns the 3-D grid up to indeces Nx, Ny and Nz along the 3 cartesian
+Returns a 3-D grid up to indeces Nx, Ny and Nz along the 3 cartesian
 directions. The grid is represented by three matrices of size Ny by Nx by Nz.
 # Example
 ```jldoctest
@@ -192,7 +192,28 @@ julia> Gx, Gy, Gz = indexGrid(3, 4, 5)
 ```
 """
 function indexGrid(Nx::Integer, Ny::Integer, Nz::Integer)
-    return meshGrid(1:Nx, 1:Ny, 1:Nz)
+    return meshGrid(0:Nx, 0:Ny, 0:Nz)
+end
+
+"""
+    roomAxes(rx, ry, rz, Lx, Ly, Lz)
+    
+Returns the 1-D axes coordinates along the sides of a rectangular room with
+reference to a corner. The room has sizes Lx, Ly and Lz meters along the
+cartesian directions, while rx, ry and rz express the step of the axes along
+each cartesian direction.
+"""
+function roomAxes(
+    rx::Real, ry::Real, rz::Real,
+    Lx::Real, Ly::Real, Lz::Real
+    )
+    
+    x = range(0.0, stop = Lx, length = round(Integer, 1 + Lx / rx))
+    y = range(0.0, stop = Ly, length = round(Integer, 1 + Ly / ry))
+    z = range(0.0, stop = Lz, length = round(Integer, 1 + Lz / rz))
+    
+    return x, y, z
+    
 end
 
 """
@@ -207,9 +228,7 @@ function roomGrid(
     Lx::Real, Ly::Real, Lz::Real
     )
 
-    x = range(0.0, stop = Lx, length = round(Integer, 1 + Lx / rx))
-    y = range(0.0, stop = Ly, length = round(Integer, 1 + Ly / ry))
-    z = range(0.0, stop = Lz, length = round(Integer, 1 + Lz / rz))
+    x, y, z = roomAxes(rx, ry, rz, Lx, Ly, Lz)
 
     return meshGrid(x, y, z)
 
